@@ -11,12 +11,15 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden; /* Prevents body scroll bounce on mobile */
 }
 
 .exam-window {
     background-color: #ffffff;
-    width: 1100px; /* INCREASED SIZE */
-    height: 750px; /* INCREASED SIZE */
+    width: 100%;
+    max-width: 1100px; 
+    height: 100vh;
+    max-height: 800px; 
     display: flex;
     flex-direction: column;
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -47,38 +50,25 @@ body {
     flex-grow: 1;
     padding: 30px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
-.instruction {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
-}
+.instruction { font-size: 14px; color: #666; margin-bottom: 20px; }
+.question-text { font-size: 16px; color: #000; margin-bottom: 30px; line-height: 1.5; }
 
-.question-text {
-    font-size: 16px;
-    color: #000;
-    margin-bottom: 30px;
-    line-height: 1.5;
-}
-
-.options-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
+.options-container { display: flex; flex-direction: column; gap: 15px; }
 
 .option-label {
     display: flex;
     align-items: center;
     font-size: 15px;
     cursor: pointer;
-    padding: 5px;
+    padding: 8px 5px; /* Slightly larger tap area */
 }
 
 .option-label input[type="radio"], .option-label input[type="checkbox"] {
     margin-right: 15px;
-    transform: scale(1.2);
+    transform: scale(1.3);
 }
 
 /* Footer Navigation */
@@ -88,13 +78,7 @@ body {
     padding: 15px 30px;
 }
 
-.timer-container {
-    text-align: right;
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 15px;
-}
+.timer-container { text-align: right; font-size: 14px; font-weight: bold; color: #333; margin-bottom: 15px; }
 
 .footer-controls {
     display: flex;
@@ -102,163 +86,111 @@ body {
     align-items: center;
 }
 
-.left-buttons, .right-buttons {
-    display: flex;
-    gap: 10px;
-}
+.left-buttons, .right-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
 
 .mta-btn {
     background-color: #e0e0e0;
     border: 1px solid #999;
-    padding: 6px 12px;
-    font-size: 13px;
+    padding: 8px 14px;
+    font-size: 14px;
     cursor: pointer;
     color: #333;
+    border-radius: 4px; /* Smoother look for mobile */
 }
 
-.mta-btn:hover:not(:disabled) {
-    background-color: #d0d0d0;
-}
-
-.mta-btn:disabled {
-    background-color: #f9f9f9;
-    color: #aaa;
-    border-color: #ddd;
-    cursor: not-allowed;
-}
-
-.nav-btn {
-    min-width: 80px;
-    font-weight: bold;
-}
+.mta-btn:hover:not(:disabled) { background-color: #d0d0d0; }
+.mta-btn:disabled { background-color: #f9f9f9; color: #aaa; border-color: #ddd; cursor: not-allowed; }
+.nav-btn { min-width: 80px; font-weight: bold; }
 
 /* Summary Area Styles */
-#summary-area {
-    background-color: #fdfdfd;
-}
-
-.summary-item {
-    border-bottom: 1px solid #ddd;
-    padding: 15px 0;
-}
-
-.summary-question {
-    font-weight: bold;
-    margin-bottom: 8px;
-    font-size: 15px;
-}
-
-.summary-result {
-    font-size: 14px;
-    margin-bottom: 4px;
-}
-
+#summary-area { background-color: #fdfdfd; }
+.summary-item { border-bottom: 1px solid #ddd; padding: 15px 0; }
+.summary-question { font-weight: bold; margin-bottom: 8px; font-size: 15px; }
+.summary-result { font-size: 14px; margin-bottom: 4px; }
 .result-correct { color: #2e7d32; font-weight: bold; }
 .result-incorrect { color: #c62828; font-weight: bold; }
 
 .summary-correct-answer, .summary-user-answer {
-    font-size: 14px;
-    color: #555;
-    padding: 6px;
-    margin-top: 5px;
+    font-size: 14px; color: #555; padding: 6px; margin-top: 5px; word-wrap: break-word;
 }
-.summary-correct-answer {
-    background-color: #e8f5e9;
-    border-left: 4px solid #4caf50;
-}
-.summary-user-answer {
-    background-color: #f5f5f5;
-    border-left: 4px solid #9e9e9e;
-}
+.summary-correct-answer { background-color: #e8f5e9; border-left: 4px solid #4caf50; }
+.summary-user-answer { background-color: #f5f5f5; border-left: 4px solid #9e9e9e; }
 
 /* Matrix (True/False) Styles */
-.matrix-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-}
-
-.matrix-table th, .matrix-table td {
-    padding: 12px;
-    border-bottom: 1px solid #ccc;
-    text-align: center;
-}
-
-.matrix-table td:first-child {
-    text-align: left;
-    width: 70%;
-}
-
-.matrix-table input[type="radio"] {
-    transform: scale(1.3);
-    cursor: pointer;
-}
+.matrix-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+.matrix-table th, .matrix-table td { padding: 12px; border-bottom: 1px solid #ccc; text-align: center; }
+.matrix-table td:first-child { text-align: left; width: 60%; }
+.matrix-table input[type="radio"] { transform: scale(1.3); cursor: pointer; }
 
 /* Drag and Drop Styles */
-.dragdrop-container {
-    display: flex;
-    gap: 20px;
-    margin-top: 15px;
-}
-
+.dragdrop-container { display: flex; gap: 20px; margin-top: 15px; }
 .drag-column {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background: #f9f9f9;
-    padding: 15px;
-    border: 1px solid #ddd;
-    min-height: 250px;
+    flex: 1; display: flex; flex-direction: column; gap: 10px;
+    background: #f9f9f9; padding: 15px; border: 1px solid #ddd; min-height: 250px;
 }
 
 .drag-item {
-    background-color: #fff;
-    border: 1px solid #777;
-    padding: 10px;
-    cursor: grab;
-    font-size: 14px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-    user-select: none;
+    background-color: #fff; border: 1px solid #777; padding: 12px;
+    cursor: grab; font-size: 14px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    user-select: none; touch-action: none; /* Prevents default mobile scroll when touching item */
 }
 
 .drag-item:active { cursor: grabbing; }
 .drag-item.is-dragging { opacity: 0.5; }
 
 .target-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #eee;
-    padding: 8px;
-    border: 1px solid #ccc;
+    display: flex; align-items: center; justify-content: space-between;
+    background-color: #eee; padding: 8px; border: 1px solid #ccc; gap: 10px;
 }
-
-.target-label {
-    flex: 1;
-    font-size: 14px;
-    font-weight: bold;
-    padding-right: 10px;
-}
-
+.target-label { flex: 1; font-size: 14px; font-weight: bold; }
 .drop-zone {
-    width: 200px;
-    min-height: 40px;
-    background-color: #fff;
-    border: 2px dashed #999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 200px; min-height: 45px; background-color: #fff;
+    border: 2px dashed #999; display: flex; align-items: center; justify-content: center;
+}
+.drop-zone.drag-over { background-color: #e3f2fd; border-color: #1976d2; }
+.drop-zone * { pointer-events: none; } /* Prevents child text blocking drops */
+.drop-zone .drag-item { margin: 0; width: 100%; box-shadow: none; border: none; }
+
+/* The Mobile Touch Ghost Element */
+.ghost-drag {
+    position: absolute;
+    z-index: 9999;
+    pointer-events: none; /* Magic line: lets elementFromPoint see 'through' the ghost to find the drop zone */
+    opacity: 0.9;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    border: 2px solid #1976d2;
 }
 
-.drop-zone.drag-over {
-    background-color: #e3f2fd;
-    border-color: #1976d2;
-}
 
-.drop-zone .drag-item {
-    margin: 0;
-    width: 100%;
-    box-shadow: none;
-    border: none;
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+    .exam-window {
+        height: 100vh;
+        max-height: 100vh;
+        border: none;
+    }
+    
+    .exam-header { padding: 15px 20px; }
+    .content-area { padding: 15px 20px; }
+    
+    /* Stack Drag and Drop vertically */
+    .dragdrop-container { flex-direction: column; gap: 30px; }
+    .drop-zone { width: 140px; } /* Slightly smaller drop zones for phone screens */
+    
+    /* Matrix Table Adjustments */
+    .matrix-table td:first-child { width: auto; font-size: 13px; }
+    .matrix-table th, .matrix-table td { padding: 8px 4px; }
+    
+    /* Footer Adjustments */
+    .footer-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .left-buttons, .right-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+    .mta-btn { width: 100%; text-align: center; } /* Full width buttons */
+    .right-buttons { margin-top: 5px; }
+    .nav-btn { width: 48%; } /* Side by side next/prev */
 }

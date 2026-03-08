@@ -2,7 +2,7 @@
 let currentIndex = 0;
 let userAnswers = [];
 let examStarted = false;
-let timeRemaining = 45 * 60; // 45 minutes
+let timeRemaining = 45 * 60; 
 let timerInterval = null;
 
 // DOM Elements
@@ -14,7 +14,7 @@ const btnNext = document.getElementById('btn-next');
 const btnSubmit = document.getElementById('btn-submit');
 const btnAnswerKey = document.getElementById('btn-answer-key');
 const btnBackToExam = document.getElementById('btn-back-to-exam');
-const btnRetake = document.getElementById('btn-retake'); // NEW RETAKE BUTTON
+const btnRetake = document.getElementById('btn-retake'); 
 const timeDisplay = document.getElementById('time-display');
 const examArea = document.getElementById('exam-area');
 const summaryArea = document.getElementById('summary-area');
@@ -27,7 +27,7 @@ function initExam() {
         if (q.type === 'multiple') return [];
         if (q.type === 'matrix') return new Array(q.statements.length).fill(null);
         if (q.type === 'dragdrop') return new Array(q.targets.length).fill(null);
-        return null; // single
+        return null; 
     });
     
     loadQuestion(currentIndex);
@@ -54,7 +54,7 @@ function initExam() {
     });
 
     btnBackToExam.addEventListener('click', returnToExam);
-    btnRetake.addEventListener('click', resetExam); // Wire up reset function
+    btnRetake.addEventListener('click', resetExam); 
 }
 
 // Reset Entire Exam
@@ -239,6 +239,7 @@ function renderDragDropOptions(question, index) {
         dropZone.className = 'drop-zone';
         dropZone.dataset.targetIdx = targetIdx;
         
+        // Desktop Drag Over events
         dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', e => dropZone.classList.remove('drag-over'));
         dropZone.addEventListener('drop', e => handleTargetDrop(e, dropZone, sourceCol, index, targetIdx));
@@ -259,6 +260,7 @@ function renderDragDropOptions(question, index) {
         }
     });
 
+    // Desktop Return to source logic
     sourceCol.addEventListener('dragover', e => e.preventDefault());
     sourceCol.addEventListener('drop', e => {
         e.preventDefault();
@@ -282,16 +284,79 @@ function createDragItem(text, srcIdx, questionIndex) {
     item.textContent = text;
     item.id = `drag-${questionIndex}-${srcIdx}`;
     
+    // --- DESKTOP DRAG EVENTS ---
     item.addEventListener('dragstart', e => {
         startTimer();
         e.dataTransfer.setData('text/plain', JSON.stringify({ srcIdx: srcIdx, elementId: item.id }));
         setTimeout(() => item.classList.add('is-dragging'), 0);
     });
-    
     item.addEventListener('dragend', () => item.classList.remove('is-dragging'));
+
+    // --- MOBILE TOUCH EVENTS ---
+    let ghost = null;
+
+    item.addEventListener('touchstart', e => {
+        startTimer();
+        const touch = e.touches[0];
+        
+        // Create visual clone
+        ghost = item.cloneNode(true);
+        ghost.classList.add('ghost-drag');
+        ghost.style.width = item.offsetWidth + 'px';
+        ghost.style.left = touch.pageX - (item.offsetWidth / 2) + 'px';
+        ghost.style.top = touch.pageY - (item.offsetHeight / 2) + 'px';
+        document.body.appendChild(ghost);
+
+        item.classList.add('is-dragging');
+    }, { passive: false });
+
+    item.addEventListener('touchmove', e => {
+        if (!ghost) return;
+        e.preventDefault(); // Prevents screen scrolling while dragging
+        const touch = e.touches[0];
+        ghost.style.left = touch.pageX - (ghost.offsetWidth / 2) + 'px';
+        ghost.style.top = touch.pageY - (ghost.offsetHeight / 2) + 'px';
+    }, { passive: false });
+
+    item.addEventListener('touchend', e => {
+        if (!ghost) return;
+        ghost.remove();
+        ghost = null;
+        item.classList.remove('is-dragging');
+
+        const touch = e.changedTouches[0];
+        // Calculate what element is directly under the finger upon release
+        const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (!dropTarget) return;
+
+        const dropZone = dropTarget.closest('.drop-zone');
+        const sourceCol = dropTarget.closest('.drag-column');
+        const originalSourceCol = document.getElementById(`source-col-${questionIndex}`);
+
+        if (dropZone) {
+            // Swap back to source if zone is occupied
+            if (dropZone.children.length > 0) {
+                originalSourceCol.appendChild(dropZone.children[0]);
+            }
+            dropZone.appendChild(item);
+            
+            const targetIdx = parseInt(dropZone.dataset.targetIdx);
+            const oldTargetIdx = userAnswers[questionIndex].indexOf(srcIdx);
+            if (oldTargetIdx !== -1) userAnswers[questionIndex][oldTargetIdx] = null;
+            
+            userAnswers[questionIndex][targetIdx] = srcIdx;
+            
+        } else if (sourceCol && sourceCol.id === `source-col-${questionIndex}`) {
+            originalSourceCol.appendChild(item);
+            const targetIdxToRemove = userAnswers[questionIndex].indexOf(srcIdx);
+            if (targetIdxToRemove !== -1) userAnswers[questionIndex][targetIdxToRemove] = null;
+        }
+    });
+
     return item;
 }
 
+// Handle drops on Desktop
 function handleTargetDrop(e, dropZone, sourceCol, questionIndex, targetIdx) {
     e.preventDefault();
     dropZone.classList.remove('drag-over');
@@ -299,10 +364,8 @@ function handleTargetDrop(e, dropZone, sourceCol, questionIndex, targetIdx) {
     const draggedData = JSON.parse(e.dataTransfer.getData('text/plain'));
     const draggedElement = document.getElementById(draggedData.elementId);
     
-    // Swap back to source if zone is occupied
     if (dropZone.children.length > 0) {
-        const existingItem = dropZone.children[0];
-        sourceCol.appendChild(existingItem);
+        sourceCol.appendChild(dropZone.children[0]);
     }
 
     dropZone.appendChild(draggedElement);
@@ -321,7 +384,6 @@ function arraysEqual(a, b) {
     return true;
 }
 
-// Formatting helpers for the summary screen
 function getCorrectAnswerString(q) {
     if (q.type === 'single') return q.options[q.correct];
     if (q.type === 'multiple') return q.correct.map(idx => q.options[idx]).join(" | ");
@@ -381,10 +443,9 @@ function generateSummary() {
     btnSubmit.style.display = 'none';
     btnAnswerKey.style.display = 'none';
     btnBackToExam.style.display = 'none'; 
-    btnRetake.style.display = 'block'; // Show Reset Button
+    btnRetake.style.display = 'block'; 
 }
 
-// Restored Answer Key functionality
 function generateAnswerKey() {
     examArea.style.display = 'none';
     summaryArea.style.display = 'block';
