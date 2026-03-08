@@ -312,7 +312,7 @@ function createDragItem(text, srcIdx, questionIndex) {
 
     item.addEventListener('touchmove', e => {
         if (!ghost) return;
-        e.preventDefault(); // Prevents screen scrolling while dragging
+        e.preventDefault(); 
         const touch = e.touches[0];
         ghost.style.left = touch.pageX - (ghost.offsetWidth / 2) + 'px';
         ghost.style.top = touch.pageY - (ghost.offsetHeight / 2) + 'px';
@@ -325,7 +325,6 @@ function createDragItem(text, srcIdx, questionIndex) {
         item.classList.remove('is-dragging');
 
         const touch = e.changedTouches[0];
-        // Calculate what element is directly under the finger upon release
         const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
         if (!dropTarget) return;
 
@@ -334,7 +333,10 @@ function createDragItem(text, srcIdx, questionIndex) {
         const originalSourceCol = document.getElementById(`source-col-${questionIndex}`);
 
         if (dropZone) {
-            // Swap back to source if zone is occupied
+            // Safety: Don't do anything if dropping the item into the exact box it's already in
+            if (dropZone.contains(item)) return;
+
+            // Swap back to source if zone is occupied by a different item
             if (dropZone.children.length > 0) {
                 originalSourceCol.appendChild(dropZone.children[0]);
             }
@@ -364,6 +366,9 @@ function handleTargetDrop(e, dropZone, sourceCol, questionIndex, targetIdx) {
     const draggedData = JSON.parse(e.dataTransfer.getData('text/plain'));
     const draggedElement = document.getElementById(draggedData.elementId);
     
+    // Safety: Don't do anything if dropping the item into the exact box it's already in
+    if (dropZone.contains(draggedElement)) return;
+
     if (dropZone.children.length > 0) {
         sourceCol.appendChild(dropZone.children[0]);
     }
@@ -384,6 +389,7 @@ function arraysEqual(a, b) {
     return true;
 }
 
+// Formatting helpers for the summary screen
 function getCorrectAnswerString(q) {
     if (q.type === 'single') return q.options[q.correct];
     if (q.type === 'multiple') return q.correct.map(idx => q.options[idx]).join(" | ");

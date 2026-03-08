@@ -149,7 +149,13 @@ body {
 }
 .drop-zone.drag-over { background-color: #e3f2fd; border-color: #1976d2; }
 .drop-zone * { pointer-events: none; } /* Prevents child text blocking drops */
-.drop-zone .drag-item { margin: 0; width: 100%; box-shadow: none; border: none; }
+.drop-zone .drag-item { 
+    margin: 0; 
+    width: 100%; 
+    box-shadow: none; 
+    border: none; 
+    pointer-events: auto; /* Restores your ability to click/touch it again! */
+}
 
 /* The Mobile Touch Ghost Element */
 .ghost-drag {
