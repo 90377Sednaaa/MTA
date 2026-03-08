@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MTA Practice Exam</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="exam-window">
+      <header class="exam-header">
+        <h1 id="question-counter">Question 1 of 40</h1>
+        <div class="header-divider"></div>
+      </header>
+
+      <main class="content-area" id="exam-area">
+        <div class="instruction" id="instruction-text">
+          Select the correct answer.
+        </div>
+        <p class="question-text" id="question-text">Loading question...</p>
+        <div class="options-container" id="options-container"></div>
+      </main>
+
+      <main class="content-area" id="summary-area" style="display: none">
+        <h2 id="summary-title" style="margin-bottom: 20px">Exam Summary</h2>
+        <div id="summary-content"></div>
+      </main>
+
+      <footer class="exam-footer">
+        <div class="timer-container">
+          Time Remaining <span id="time-display">45:00</span>
+        </div>
+        <div class="footer-controls">
+          <div class="left-buttons">
+            <button class="mta-btn" id="btn-answer-key">Answer Key</button>
+            <button
+              class="mta-btn"
+              id="btn-submit"
+              style="font-weight: bold; background-color: #dcedc8"
+            >
+              Submit Exam
+            </button>
+            <button class="mta-btn" id="btn-back-to-exam" style="display: none">
+              Return to Exam
+            </button>
+            <button
+              class="mta-btn"
+              id="btn-retake"
+              style="
+                display: none;
+                font-weight: bold;
+                background-color: #ffe0b2;
+              "
+            >
+              Take Exam Again
+            </button>
+          </div>
+          <div class="right-buttons">
+            <button class="mta-btn nav-btn" id="btn-prev">Back</button>
+            <button class="mta-btn nav-btn" id="btn-next">Next</button>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
